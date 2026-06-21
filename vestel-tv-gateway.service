@@ -1,0 +1,36 @@
+[Unit]
+Description=Vestel TV MQTT Gateway - Vestel displays to MQTT
+After=network-online.target
+Wants=network-online.target
+Requires=network-online.target
+
+[Service]
+Type=simple
+User=vestel
+Group=vestel
+WorkingDirectory=/opt/vestel-tv-gateway
+ExecStart=/opt/vestel-tv-gateway/venv/bin/python -u /opt/vestel-tv-gateway/main.py /opt/vestel-tv-gateway/config.yaml
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=vestel-tv-gateway
+
+Environment="PYTHONUNBUFFERED=1"
+Environment="PYTHONPATH=/opt/vestel-tv-gateway"
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/vestel-tv-gateway
+
+LimitNOFILE=65536
+LimitNPROC=4096
+
+TimeoutStopSec=60
+KillMode=mixed
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target

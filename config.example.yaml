@@ -1,0 +1,34 @@
+# Vestel TV MQTT Gateway configuration. Copy to config.yaml and fill in your TVs.
+
+mqtt:
+  host: "127.0.0.1"
+  port: 1883
+  username: "ha"
+  password: "CHANGE_ME"
+  client_id: "vestel-tv-gateway"
+  base_topic: "tv"
+
+vestel:
+  poll_interval: 15          # seconds between GET* polls per TV
+  default_on_volume: 20      # volume used for TON when powering a TV on (if last volume unknown)
+  command_timeout_ms: 2000
+
+  tvs:
+    - id: tv-1
+      name: "TV 1"
+      host: 10.134.11.97
+      port: 1986
+      # source labels -> SELECTSOURCE code. HDMI1 (7) = video stream, HDMI2 (8) = local HDMI.
+      # (defaults: AV=5, HDMI1=7, HDMI2=8, YPbPr=11, VGA=12, DVI=18, DisplayPort=19, OPS=20, Wireless=21)
+      sources: { Stream: 7, HDMI: 8 }
+
+    # - id: tv-2
+    #   name: "TV 2"
+    #   host: 10.134.x.x
+    #   port: 1986
+
+  reconnect_initial_delay: 1.0
+  reconnect_max_delay: 60.0
+  reconnect_jitter: 0.1
+
+log_level: "INFO"
