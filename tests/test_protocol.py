@@ -36,7 +36,13 @@ def test_parse_power():
 def test_parse_source():
     assert parse_source("#*source is HDMI1") == "HDMI1"
     assert parse_source("#*source is Display Port") == "Display Port"
+    assert parse_source("#*ACTIVE_SOURCE HDMI2") == "HDMI2"  # observed firmware variant
     assert parse_source("nope") is None
+
+
+def test_parse_power_casing():
+    assert parse_power("#*Standby off") is True   # observed: TV on
+    assert parse_power("#*Standby on") is False    # observed: active standby
 
 
 if __name__ == "__main__":

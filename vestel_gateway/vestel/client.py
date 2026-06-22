@@ -53,7 +53,9 @@ def parse_power(line: str) -> Optional[bool]:
 
 
 def parse_source(line: str) -> Optional[str]:
-    m = re.search(r"source is\s*(.+)$", _clean(line), re.I)
+    s = _clean(line)
+    # Firmware variants: "source is HDMI1" (doc) or "ACTIVE_SOURCE HDMI2" (observed).
+    m = re.search(r"ACTIVE_SOURCE\s+(\S+)", s, re.I) or re.search(r"source is\s*(.+)$", s, re.I)
     return m.group(1).strip() if m else None
 
 
@@ -143,7 +145,8 @@ class VestelClient:
         return parse_volume(await self._send_recv("GETVOLUME") or "")
 
     async def get_mute(self) -> Optional[bool]:
-        return parse_mute(await self._send_recv("GET MUTE") or "")
+        # This firmware uses "GETMUTE"/"SETMUTE" (no space); the spaced doc form times out.
+        return parse_mute(await self._send_recv("GETMUTE") or "")
 
     async def get_source(self) -> Optional[str]:
         return parse_source(await self._send_recv("GETSOURCE") or "")
@@ -166,7 +169,7 @@ class VestelClient:
         if cur is None:
             return False
         if cur != target:
-            return (await self._send_recv("SET MUTE")) is not None
+            return (await self._send_recv("SETMUTE")) is not None
         return True
 
     async def select_source(self, code: int) -> bool:
